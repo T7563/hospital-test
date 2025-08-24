@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Secure Hospital Report Access</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 30px; background: #f9f9f9; }
+    .box { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+    input, button { margin: 8px; padding: 10px; width: 90%; font-size: 16px; }
+    button { background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #0056b3; }
+    #result { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Secure Patient Report Access</h2>
+    <input type="text" id="pid" placeholder="Patient ID" required><br>
+    <input type="text" id="pname" placeholder="Patient Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <button onclick="sendOTP()">Get OTP</button><br>
+    
+    <input type="text" id="otp" placeholder="Enter OTP"><br>
+    <button onclick="checkOTP()">Verify OTP</button>
+    
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // Replace with your deployed Google Apps Script Web App URL
+    const WEB_APP_URL = "YOUR_WEB_APP_URL_HEREhttps://script.google.com/macros/s/AKfycbxijOypbn1rqcDq9juKl-Vh63GK4LwAlDh1tn-kjxVn/dev";
+
+    async function sendOTP() {
+      const data = {
+        action: "generateOTP",
+        patientID: document.getElementById("pid").value,
+        patientName: document.getElementById("pname").value,
+        email: document.getElementById("email").value
+      };
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+        const msg = await response.text();
+        document.getElementById("result").innerHTML = msg;
+      } catch (err) {
+        document.getElementById("result").innerHTML = "Error: " + err;
+      }
+    }
+
+    async function checkOTP() {
+      const data = {
+        action: "verifyOTP",
+        patientID: document.getElementById("pid").value,
+        email: document.getElementById("email").value,
+        otp: document.getElementById("otp").value
+      };
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+        const msg = await response.text();
+        document.getElementById("result").innerHTML = msg;
+      } catch (err) {
+        document.getElementById("result").innerHTML = "Error: " + err;
+      }
+    }
+  </script>
+</body>
+</html>
